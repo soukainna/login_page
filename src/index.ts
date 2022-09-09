@@ -1,1 +1,13 @@
-console.log("hello 1")
+import  express, {Request, Response} from "express";
+
+const app = express();
+
+app.use(express.json());
+
+app.get("/", (req: Request, res: Response) => {
+    res.send('hello');
+})
+
+app.listen(8000, () => {
+    console.log('listening to port 8000')
+})
