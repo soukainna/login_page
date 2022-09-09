@@ -1,0 +1,25 @@
+{
+  "name": "login_page",
+  "version": "1.0.0",
+  "description": "my first login page with angular and node",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/soukainna/login_page.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/soukainna/login_page/issues"
+  },
+  "homepage": "https://github.com/soukainna/login_page#readme",
+  "dependencies": {
+    "nodemon": "^2.0.19"
+  },
+  "devDependencies": {
+    "typescript": "^4.8.3"
+  }
+}
