@@ -95,7 +95,6 @@ export const Login = async (req: Request, res: Response) => {
     })
 
     res.send({
-        accessToken,
-        refreshToken
+        message: "success"
     })
 }
