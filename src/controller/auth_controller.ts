@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { getRepository } from "typeorm";
 import { User } from "../entity/user_entity";
 import bcryptjs from 'bcryptjs'
+import {sign} from 'jsonwebtoken'
 
 export const Register = async (req: Request, res: Response) => {
     const body = req.body;
@@ -73,6 +74,14 @@ export const Login = async (req: Request, res: Response) => {
             message: "invalid credentials"
         })
     }
+
+    const access_token = sign({
+        id: user.id
+    }, "access_secret", {expiresIn: '30s'})
+
+    const refresh_token = sign({
+        id: user.id
+    }, "refresh_token", {expiresIn: '1w'})
 
     res.send(user)
 }
