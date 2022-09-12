@@ -1,3 +1,6 @@
+//I should config my dotenv to use the .env
+require(('dotenv')).config()
+
 import { log } from "console";
 import  express, {Request, Response} from "express";
 import { createConnection } from "typeorm";

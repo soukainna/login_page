@@ -77,11 +77,11 @@ export const Login = async (req: Request, res: Response) => {
 
     const accessToken = sign({
         id: user.id
-    }, "access_secret", {expiresIn: '30s'})
+    }, process.env.ACCESS_SECRET ||  '', {expiresIn: '30s'})
 
     const refreshToken = sign({
         id: user.id
-    }, "refresh_token", {expiresIn: '1w'})
+    }, process.env.REFRESH_SECRET ||  '', {expiresIn: '1w'})
 
     //stock my tokens in cookies
     res.cookie('access_token', accessToken, {
