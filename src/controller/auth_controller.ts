@@ -98,3 +98,12 @@ export const Login = async (req: Request, res: Response) => {
         message: "success"
     })
 }
+
+//auth
+
+export const authUser = async (req: Request, res: Response) => {
+    const cookie = req.cookies('access_token');
+
+    res.send(cookie)
+    
+}

@@ -6,6 +6,7 @@ import  express, {Request, Response} from "express";
 import { createConnection } from "typeorm";
 import { routes } from "./routes";
 import cors from 'cors'
+import cookieParser from "cookie-parser";
 
 
 createConnection({
@@ -25,6 +26,9 @@ createConnection({
     const app = express();
 
     app.use(express.json());
+
+    //allow to use cookie_parser
+    app.use(cookieParser())
 
     //that allow to send request from the backend and credential to manip cookies
     //this is usefull for frontend
