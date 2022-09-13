@@ -44,7 +44,7 @@ export const Register = async (req: Request, res: Response) => {
     }
 
     //stock my user
-    const user = await getRepository(User).save({
+    const {password, ...user} = await getRepository(User).save({
         first_name: body.first_name,
         last_name: body.last_name,
         email: body.email,
