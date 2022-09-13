@@ -105,27 +105,33 @@ export const authUser = async (req: Request, res: Response) => {
     try {
         const cookie = req.cookies['access_token'];
 
-    const payload : any = verify(cookie, process.env.ACCESS_SECRET || '')
+        const payload: any = verify(cookie, process.env.ACCESS_SECRET || '')
 
-    if (!payload) {
-        return res.status(401).send({
-            message: 'Unauthenticated'
-        })
-    }
+        if (!payload) {
+            return res.status(401).send({
+                message: 'Unauthenticated'
+            })
+        }
 
-    const user = await getRepository(User).findOne(payload.id);
+        const user = await getRepository(User).findOne({
+            where: {
+                id: payload.id
+            }
+        });
 
-    if (!user) {
-        return res.status(401).send({
-            message: 'Unauthenticated'
-        })
-    }
+        if (!user) {
+            return res.status(401).send({
+                message: 'Unauthenticated'
+            })
+        }
+         //this is a better way hide my password
+        const {password, ...data} = user;
 
-    res.send(user)
-    } catch (e){
-        return res.status(401).send({
-            message: 'Unauthenticated'
-        }) 
-    }
+        res.send(data)
+        } catch (e){
+            return res.status(401).send({
+                message: 'Unauthenticated'
+            }) 
+        }
     
 }
