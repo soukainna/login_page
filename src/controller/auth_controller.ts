@@ -135,3 +135,38 @@ export const authUser = async (req: Request, res: Response) => {
         }
     
 }
+
+//refresh token that allow to refresh token steal 30s to print info of router /user
+
+export const refresh = async (req: Request, res: Response) => {
+    try {
+        const cookie = req.cookies["refresh_token"];
+
+    const payload: any = verify(cookie, process.env.REFRESH_SECRET || '')
+
+    if (!payload){
+        res.status(401).send({
+            message : "anauthenticated"
+        })
+    }
+
+    //create other token
+    const accessToken = sign({
+        id: payload.id
+    }, process.env.ACCESS_SECRET ||  '', {expiresIn: '30s'})
+    //stovk my token in a cookie
+    res.cookie('access_token', accessToken, {
+        httpOnly: true,
+        maxAge: 24 * 60 * 60 * 1000 //one day
+    })
+
+    res.send({
+        message: 'success'
+    })
+
+    }catch{
+        res.status(401).send({
+            message : "anauthenticated"
+        })
+    }
+}
