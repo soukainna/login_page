@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { getRepository } from "typeorm";
 import { User } from "../entity/user_entity";
 import bcryptjs from 'bcryptjs'
-import {sign} from 'jsonwebtoken'
+import {sign, verify} from 'jsonwebtoken'
 
 export const Register = async (req: Request, res: Response) => {
     const body = req.body;
@@ -102,8 +102,23 @@ export const Login = async (req: Request, res: Response) => {
 //auth
 
 export const authUser = async (req: Request, res: Response) => {
-    const cookie = req.cookies('access_token');
+    const cookie = req.cookies['access_token'];
+
+    const payload : any = verify(cookie, process.env.ACCESS_SECRET || '')
+
+    if (!payload) {
+        return res.status(401).send({
+            message: 'Unauthenticated'
+        })
+    }
+
+    const user = await getRepository(User)?.findOne(payload.id);
+
+    if (!user) {
+        return res.status(401).send({
+            message: 'Unauthenticated'
+        })
+    }
 
     res.send(cookie)
-    
 }
