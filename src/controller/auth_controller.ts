@@ -102,7 +102,8 @@ export const Login = async (req: Request, res: Response) => {
 //auth
 
 export const authUser = async (req: Request, res: Response) => {
-    const cookie = req.cookies['access_token'];
+    try {
+        const cookie = req.cookies['access_token'];
 
     const payload : any = verify(cookie, process.env.ACCESS_SECRET || '')
 
@@ -112,7 +113,7 @@ export const authUser = async (req: Request, res: Response) => {
         })
     }
 
-    const user = await getRepository(User)?.findOne(payload.id);
+    const user = await getRepository(User).findOne(payload.id);
 
     if (!user) {
         return res.status(401).send({
@@ -120,5 +121,11 @@ export const authUser = async (req: Request, res: Response) => {
         })
     }
 
-    res.send(cookie)
+    res.send(user)
+    } catch (e){
+        return res.status(401).send({
+            message: 'Unauthenticated'
+        }) 
+    }
+    
 }
