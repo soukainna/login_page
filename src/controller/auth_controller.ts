@@ -154,7 +154,7 @@ export const refresh = async (req: Request, res: Response) => {
     const accessToken = sign({
         id: payload.id
     }, process.env.ACCESS_SECRET ||  '', {expiresIn: '30s'})
-    //stovk my token in a cookie
+    //stock my token in a cookie
     res.cookie('access_token', accessToken, {
         httpOnly: true,
         maxAge: 24 * 60 * 60 * 1000 //one day
@@ -169,4 +169,15 @@ export const refresh = async (req: Request, res: Response) => {
             message : "anauthenticated"
         })
     }
+}
+
+//logout
+
+export const logout = async (req: Request, res: Response) => {
+    res.cookie("access_token", '', {maxAge:0});
+    res.cookie("refresh_token", '', {maxAge:0})
+
+    res.send({
+        message: "cookies successfuly deleted"
+    })
 }
