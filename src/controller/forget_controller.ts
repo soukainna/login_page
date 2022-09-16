@@ -1,9 +1,11 @@
 import { Request, Response } from "express";
 import { createTransport } from "nodemailer";
-import { getRepository } from "typeorm";
+import { Any, getRepository } from "typeorm";
 import { Reset } from "../entity/reset_entity";
+import { User } from "../entity/user_entity";
+import bcryptjs from 'bcryptjs'
 
-export const forgot =async (req: Request, res: Response) => {
+export const forgotPassword =async (req: Request, res: Response) => {
     const {email} = req.body
     const token = Math.random().toString(20).substring(2, 12)
 
@@ -34,3 +36,40 @@ export const forgot =async (req: Request, res: Response) => {
     })
 } 
 
+export const resetPassword = async (req: Request, res: Response) => {
+    const {token, password, password_confirm} = req.body;
+
+    if(password !== password_confirm){
+        return res.status(400).send({
+            message: "password's do not match"
+        })
+    }
+
+    const resetPassword = await getRepository(Reset).findOne({
+        where: {token}
+    })
+
+    if (!resetPassword) {
+        return res.status(400).send({
+            message: "invalid Url"
+        })
+    }
+
+    const user = await getRepository(User).findOne({
+        where : {email: resetPassword.email}
+    });
+
+    if (!user) {
+        return res.status(400).send({
+            message: "User not found!"
+        })
+    }
+
+    await getRepository(User).update(user.id, {
+        password: await bcryptjs.hash(password, 12)
+    })
+
+    res.send({
+        message: "password has been reset "
+    })
+}
