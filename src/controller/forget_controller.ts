@@ -37,7 +37,8 @@ export const forgotPassword =async (req: Request, res: Response) => {
 } 
 
 export const resetPassword = async (req: Request, res: Response) => {
-    const {token, password, password_confirm} = req.body;
+    try {
+        const {token, password, password_confirm} = req.body;
 
     if(password !== password_confirm){
         return res.status(400).send({
@@ -72,4 +73,10 @@ export const resetPassword = async (req: Request, res: Response) => {
     res.send({
         message: "password has been reset "
     })
+    }catch{
+        
+    res.send({
+        message: "Error reset "
+    })
+    }
 }
