@@ -6,6 +6,9 @@ export class User {
     id!: number;
     
     @Column()
+    avatar!: string
+
+    @Column()
     first_name!: string
 
     @Column()
