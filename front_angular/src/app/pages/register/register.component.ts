@@ -22,5 +22,7 @@ export class RegisterComponent implements OnInit {
       password_confirm: '',
     })
   }
-
+   submit() {
+    
+   }
 }
