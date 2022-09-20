@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
-import { getRepository } from "typeorm";
+import { getRepository, MoreThanOrEqual } from "typeorm";
 import { User } from "../entity/user_entity";
 import bcryptjs from 'bcryptjs'
 import {sign, verify} from 'jsonwebtoken'
+import { Token } from "../entity/token_entity";
 
 export const Register = async (req: Request, res: Response) => {
     const body = req.body;
@@ -83,27 +84,38 @@ export const Login = async (req: Request, res: Response) => {
         })
     }
 
-    const accessToken = sign({
-        id: user.id
-    }, process.env.ACCESS_SECRET ||  '', {expiresIn: '30s'})
-
+   
     const refreshToken = sign({
         id: user.id
     }, process.env.REFRESH_SECRET ||  '', {expiresIn: '1w'})
 
     //stock my tokens in cookies
-    res.cookie('access_token', accessToken, {
-        httpOnly: true,
-        maxAge: 24 * 60 * 60 * 1000 //one day
-    })
+    // res.cookie('access_token', accessToken, {
+    //     httpOnly: true,
+    //     maxAge: 24 * 60 * 60 * 1000 //one day
+    // })
 
     res.cookie('refresh_token', refreshToken, {
         httpOnly: true,
         maxAge: 7 * 24 * 60 * 60 * 1000 //7 day
     })
 
+    const expired_at = new Date()
+    expired_at.setDate(expired_at.getDate() + 7)
+
+    await getRepository(Token).save({
+        user_id: user.id,
+        token: refreshToken,
+        expired_at
+    })
+
+    const token = sign({
+        id: user.id
+    }, process.env.ACCESS_SECRET ||  '', {expiresIn: '30s'})
+
+
     res.send({
-        message: "success"
+        token
     })
 }
 
@@ -111,9 +123,9 @@ export const Login = async (req: Request, res: Response) => {
 
 export const authUser = async (req: Request, res: Response) => {
     try {
-        const cookie = req.cookies['access_token'];
+        const accessToken = req.header('Authorization')?.split(' ')[1] || '';
 
-        const payload: any = verify(cookie, process.env.ACCESS_SECRET || '')
+        const payload: any = verify(accessToken, process.env.ACCESS_SECRET || '')
 
         if (!payload) {
             return res.status(401).send({
@@ -158,18 +170,30 @@ export const refresh = async (req: Request, res: Response) => {
         })
     }
 
+    const refreshToken = await getRepository(Token).findOne({
+        where: {
+            user_id: payload.id,
+            expired_at: MoreThanOrEqual(new Date())
+        }
+    })
+
+    if (!refreshToken){
+        res.status(401).send({
+            message : "anauthenticated"
+        })}
+
     //create other token
-    const accessToken = sign({
+    const token = sign({
         id: payload.id
     }, process.env.ACCESS_SECRET ||  '', {expiresIn: '30s'})
     //stock my token in a cookie
-    res.cookie('access_token', accessToken, {
-        httpOnly: true,
-        maxAge: 24 * 60 * 60 * 1000 //one day
-    })
+    // res.cookie('access_token', accessToken, {
+    //     httpOnly: true,
+    //     maxAge: 24 * 60 * 60 * 1000 //one day
+    // })
 
     res.send({
-        message: 'success'
+        token
     })
 
     }catch{
@@ -182,7 +206,12 @@ export const refresh = async (req: Request, res: Response) => {
 //logout
 
 export const logout = async (req: Request, res: Response) => {
-    res.cookie("access_token", '', {maxAge:0});
+    
+
+    await getRepository(Token).delete({
+        token:  req.cookies['refresh_token']
+    })
+    // res.cookie("access_token", '', {maxAge:0});
     res.cookie("refresh_token", '', {maxAge:0})
 
     res.send({
