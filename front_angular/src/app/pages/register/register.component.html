@@ -3,7 +3,7 @@
       <h1 class="h3 mb-3 fw-normal">Please Register</h1>
       <div>
         <label for="image_uploads">upload yout profile image (PNG, JPG)</label>
-        <input formControlName="avatar" type="file" id="image_uploads" name="image_uploads" accept=".jpg, .jpeg, .png" multiple>
+        <input (change)="getFile($event)" formControlName="avatar" type="file" id="image_uploads" name="image_uploads" accept=".jpg, .jpeg, .png" multiple>
       </div>
       <div class="form-floating">
         <input  formControlName="first_name" class="form-control"  placeholder="first name">
@@ -14,7 +14,7 @@
         <label >Last name</label>
       </div>
       <div class="form-floating">
-        <input type="email" class="form-control"  placeholder="name@example.com">
+        <input formControlName="email" type="email" class="form-control"  placeholder="name@example.com">
         <label>Email address</label>
       </div>
       <div class="form-floating">

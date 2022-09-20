@@ -2,11 +2,15 @@ import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class User {
+
+    constructor(){
+        this.avatar = "";
+    }
     @PrimaryGeneratedColumn()
     id!: number;
     
-    @Column()
-    avatar!: string
+    @Column({default: "none"})
+    avatar: string
 
     @Column()
     first_name!: string

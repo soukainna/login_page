@@ -7,6 +7,14 @@ import {sign, verify} from 'jsonwebtoken'
 export const Register = async (req: Request, res: Response) => {
     const body = req.body;
 
+
+    //
+    if(!body.avatar){
+        return res.status(400).send({
+            message: "Error avatar"
+        })
+    }
+
     //
     if(body.first_name.length === 0){
         return res.status(400).send({
