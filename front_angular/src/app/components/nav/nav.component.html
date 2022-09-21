@@ -9,7 +9,11 @@
           <li><a routerLink="/" class="nav-link px-2 text-white">Home</a></li>
         </ul>
   
-        <div class="text-end">
+        <div class="text-end" *ngIf="auth">
+          <a routerLink="/" class="btn btn-outline-light me-2" (click)="logout()">Logout</a>
+        </div>
+
+        <div class="text-end" *ngIf="!auth">
           <a routerLink="/login" class="btn btn-outline-light me-2">Login</a>
           <a routerLink="/register" class="btn btn-outline-light me-2">Sign-up</a>
         </div>

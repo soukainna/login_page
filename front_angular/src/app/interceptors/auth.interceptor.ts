@@ -12,6 +12,8 @@ import { AuthService } from '../serices/auth.service';
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
 
+  refresh = false
+
   constructor(
     private authService: AuthService
   ) {}
@@ -26,7 +28,10 @@ export class AuthInterceptor implements HttpInterceptor {
     
     return next.handle(req).pipe(catchError((err: HttpErrorResponse) => {
 
-      if(err.status === 401){
+      if(err.status === 401 && !this.refresh){
+
+        this.refresh = true
+
         return this.authService.refresh().pipe(
           switchMap((res: any) => {
             this.authService.accessToken = res.token;
@@ -39,6 +44,7 @@ export class AuthInterceptor implements HttpInterceptor {
           })
         )
       }
+      this.refresh = false
       return throwError(() => err)
     }));
   }
