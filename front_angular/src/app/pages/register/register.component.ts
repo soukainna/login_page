@@ -33,10 +33,10 @@ export class RegisterComponent implements OnInit {
     })
   }
 
-  getFile(event: any){
-    this.file = event.target.files[0];
-    console.log('file', this.file)
-  }
+  // getFile(event: any){
+  //   this.file = event.target.files[0];
+  //   console.log('file', this.file)
+  // }
 
    submit() {
     // this.http.post('http://localhost:8000/api/register', this.form.getRawValue()).subscribe(
