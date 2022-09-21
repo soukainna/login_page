@@ -17,11 +17,12 @@ export class HomeComponent implements OnInit {
     this.authService.user().subscribe(
       {
         next: (res: any)=> {
-          this.message = ` Hello ${res.first_name} ${res.last_name}`
+          this.message = ` Hello ${res.first_name} ${res.last_name}`;
+          AuthService.authEmitter.emit(true)
         },
         error: err =>{
          this.message = 'you are not authentificated'
-          
+         AuthService.authEmitter.emit(false)
         }
       }
     )
