@@ -9,6 +9,8 @@ import { AuthService } from 'src/app/serices/auth.service';
 export class HomeComponent implements OnInit {
 
   message = ''
+  img = ''
+  body = ''
   constructor(
     private authService: AuthService
   ) { }
@@ -18,6 +20,8 @@ export class HomeComponent implements OnInit {
       {
         next: (res: any)=> {
           this.message = ` Hello ${res.first_name} ${res.last_name}`;
+          this.body = `ipsum dolor sit amet, consectetur adipisicing elit. Vel aliquam provident iusto sequi numquam corrupti culpa quibusdam voluptate dolore quia amet, accusamus molestias excepturi aliquid nihil tenetur unde, repudiandae voluptas!`
+          this.img = `${res.avatar}`
           AuthService.authEmitter.emit(true)
         },
         error: err =>{

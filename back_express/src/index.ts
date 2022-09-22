@@ -8,11 +8,15 @@ import { routes } from "./routes";
 import cors from 'cors'
 import cookieParser from "cookie-parser";
 
+import path from "path";
+import fileUpload from "express-fileupload";
+import bodyParser from "body-parser"
+
 
 createConnection({
     "type": "mysql",
     "host": "localhost",
-    "port": 3306,
+    "port": 3306, 
     "username": "root",
     "password": "root",
     "database": "node_auth",
@@ -25,11 +29,13 @@ createConnection({
     console.log('connection to database')
     const app = express();
 
+
     app.use(express.json());
 
     //allow to use cookie_parser
     app.use(cookieParser())
 
+    
     //that allow to send request from the backend and credential to manip cookies
     //this is usefull for frontend
     app.use(cors({

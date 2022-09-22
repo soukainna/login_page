@@ -3,7 +3,7 @@
       <h1 class="h3 mb-3 fw-normal">Please Register</h1>
       <div>
         <label>upload yout profile image (PNG, JPG)</label>
-        <input  formControlName="avatar" type="file" name="image_uploads" accept=".jpg, .jpeg, .png" multiple>
+        <input (change)="onFileSelect($event)" formControlName="avatar" type="file" accept=".jpg, .jpeg, .png" multiple>
       </div>
       <div class="form-floating">
         <input  formControlName="first_name" class="form-control"  placeholder="first name">

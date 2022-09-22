@@ -5,11 +5,10 @@ import bcryptjs from 'bcryptjs'
 import {sign, verify} from 'jsonwebtoken'
 import { Token } from "../entity/token_entity";
 
-export const Register = async (req: Request, res: Response) => {
+export const Register = async ( req: Request, res: Response) => {
     const body = req.body;
-
-
-    //
+    
+    
     if(!body.avatar){
         return res.status(400).send({
             message: "Error avatar"
@@ -57,7 +56,8 @@ export const Register = async (req: Request, res: Response) => {
         first_name: body.first_name,
         last_name: body.last_name,
         email: body.email,
-        password: await bcryptjs.hash(body.password, 12)
+        password: await bcryptjs.hash(body.password, 12),
+        avatar: body.avatar.substr(12)
     })
 
     res.send(user);

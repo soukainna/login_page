@@ -13,7 +13,7 @@ import { AuthService } from 'src/app/serices/auth.service';
 export class RegisterComponent implements OnInit {
 
   form!: FormGroup;
-  file: any
+  fileinput: any
   constructor(
     private formBuilder: FormBuilder,
     private http: HttpClient,
@@ -33,11 +33,18 @@ export class RegisterComponent implements OnInit {
     })
   }
 
+  onFileSelect(event: any) {
+    const file = event.target.files[0];
+    this.fileinput = file;
+    console.log('file', this.fileinput)
+   // this.form!.get('avatar').setValue(file);
+  }
   // getFile(event: any){
   //   this.file = event.target.files[0];
   //   console.log('file', this.file)
   // }
 
+  
    submit() {
     // this.http.post('http://localhost:8000/api/register', this.form.getRawValue()).subscribe(
     //   () => this.router.navigate(['/login'])
@@ -46,6 +53,8 @@ export class RegisterComponent implements OnInit {
     this.authService.register(this.form.getRawValue()).subscribe(
       () => this.router.navigate(['/login'])
     )
-    console.log(this.form)
+ 
+    //console.log(  this.form.getRawValue().avatar.substr(12))
+    
    }
 }
