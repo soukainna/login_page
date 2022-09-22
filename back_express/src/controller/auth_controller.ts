@@ -139,7 +139,7 @@ export const Login = async (req: Request, res: Response) => {
 //QR
 const qrcode = require('qrcode')
 export const QR = async (req: Request, res: Response) =>{
-    qrcode.toDataURL('otpauth://totp/my%20app?secret=OVREU4DUFJMEETCJENKEKZD5N4YE242JPA7D6OK5I5RV44ZJMZ5Q', (err: any, data: any) => {
+    qrcode.toDataURL('otpauth://totp/my%20app?secret=NBDDS622PVRTYWTHPVWD6ZDCGBFUQSKBHJUG6YZGMVSU622GHQUA', (err: any, data: any) => {
         res.send(`<img src="${data}"/>`)
     })
 }

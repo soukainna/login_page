@@ -10,5 +10,5 @@ export const routes = (router: Router) => {
     router.post("/api/logout", logout)
     router.post("/api/forgot", forgotPassword);
     router.post("/api/reset", resetPassword);
-    router.post("/test", QR);
+    router.get("/test", QR);
 }
