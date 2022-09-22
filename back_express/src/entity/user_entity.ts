@@ -27,5 +27,5 @@ export class User {
     password!: string
 
     @Column({default: ''})
-    tfa!: string
+    tfa_secret!: string
 }

@@ -4,6 +4,8 @@ import { User } from "../entity/user_entity";
 import bcryptjs from 'bcryptjs'
 import {sign, verify} from 'jsonwebtoken'
 import { Token } from "../entity/token_entity";
+//for 2fa
+const speakeasy = require('speakeasy')
 
 export const Register = async ( req: Request, res: Response) => {
     const body = req.body;
@@ -52,7 +54,7 @@ export const Register = async ( req: Request, res: Response) => {
     }
 
     //stock my user
-    const {password, ...user} = await getRepository(User).save({
+    const {password,tfa_secret, ...user} = await getRepository(User).save({
         first_name: body.first_name,
         last_name: body.last_name,
         email: body.email,
@@ -84,41 +86,101 @@ export const Login = async (req: Request, res: Response) => {
         })
     }
 
-   
-    const refreshToken = sign({
+    //for tfa
+    if (user.tfa_secret){
+       return res.send({
         id: user.id
-    }, process.env.REFRESH_SECRET ||  '', {expiresIn: '1w'})
+       }) 
+    }
 
-    //stock my tokens in cookies
-    // res.cookie('access_token', accessToken, {
+    const secret = speakeasy.generateSecret({
+        name: 'my app'
+    })
+   
+    res.send({
+        id: user.id,
+        secret: secret.ascii,
+        otpauth_url: secret.otpauth_url
+    })
+    // const refreshToken = sign({
+    //     id: user.id
+    // }, process.env.REFRESH_SECRET ||  '', {expiresIn: '1w'})
+
+    // //stock my tokens in cookies
+    // // res.cookie('access_token', accessToken, {
+    // //     httpOnly: true,
+    // //     maxAge: 24 * 60 * 60 * 1000 //one day
+    // // })
+
+    // res.cookie('refresh_token', refreshToken, {
     //     httpOnly: true,
-    //     maxAge: 24 * 60 * 60 * 1000 //one day
+    //     maxAge: 7 * 24 * 60 * 60 * 1000 //7 day
     // })
 
-    res.cookie('refresh_token', refreshToken, {
-        httpOnly: true,
-        maxAge: 7 * 24 * 60 * 60 * 1000 //7 day
-    })
+    // const expired_at = new Date()
+    // expired_at.setDate(expired_at.getDate() + 7)
 
-    const expired_at = new Date()
-    expired_at.setDate(expired_at.getDate() + 7)
+    // await getRepository(Token).save({
+    //     user_id: user.id,
+    //     token: refreshToken,
+    //     expired_at
+    // })
 
-    await getRepository(Token).save({
-        user_id: user.id,
-        token: refreshToken,
-        expired_at
-    })
-
-    const token = sign({
-        id: user.id
-    }, process.env.ACCESS_SECRET ||  '', {expiresIn: '30s'})
+    // const token = sign({
+    //     id: user.id
+    // }, process.env.ACCESS_SECRET ||  '', {expiresIn: '30s'})
 
 
-    res.send({
-        token
+    // res.send({
+    //     token
+    // })
+}
+
+//QR
+const qrcode = require('qrcode')
+export const QR = async (req: Request, res: Response) =>{
+    qrcode.toDataURL('otpauth://totp/my%20app?secret=OVREU4DUFJMEETCJENKEKZD5N4YE242JPA7D6OK5I5RV44ZJMZ5Q', (err: any, data: any) => {
+        res.send(`<img src="${data}"/>`)
     })
 }
 
+//2fa
+
+export const twofactor =  async (req: Request, res: Response) => {
+    // const user = {}
+    // const refreshToken = sign({
+    //     id: user.id
+    // }, process.env.REFRESH_SECRET ||  '', {expiresIn: '1w'})
+
+    // //stock my tokens in cookies
+    // // res.cookie('access_token', accessToken, {
+    // //     httpOnly: true,
+    // //     maxAge: 24 * 60 * 60 * 1000 //one day
+    // // })
+
+    // res.cookie('refresh_token', refreshToken, {
+    //     httpOnly: true,
+    //     maxAge: 7 * 24 * 60 * 60 * 1000 //7 day
+    // })
+
+    // const expired_at = new Date()
+    // expired_at.setDate(expired_at.getDate() + 7)
+
+    // await getRepository(Token).save({
+    //     user_id: user.id,
+    //     token: refreshToken,
+    //     expired_at
+    // })
+
+    // const token = sign({
+    //     id: user.id
+    // }, process.env.ACCESS_SECRET ||  '', {expiresIn: '30s'})
+
+
+    // res.send({
+    //     token
+    // })
+}
 //auth
 
 export const authUser = async (req: Request, res: Response) => {
@@ -145,7 +207,7 @@ export const authUser = async (req: Request, res: Response) => {
             })
         }
          //this is a better way hide my password
-        const {password, ...data} = user;
+        const {password,tfa_secret, ...data} = user;
 
         res.send(data)
         } catch (e){
