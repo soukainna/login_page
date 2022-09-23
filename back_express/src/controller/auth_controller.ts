@@ -10,11 +10,11 @@ export const Register = async ( req: Request, res: Response) => {
     const body = req.body;
     
     
-    if(!body.avatar){
-        return res.status(400).send({
-            message: "Error avatar"
-        })
-    }
+    // if(!body.avatar){
+    //     return res.status(400).send({
+    //         message: "Error avatar"
+    //     })
+    // }
 
     //
     if(body.first_name.length === 0){
@@ -40,12 +40,12 @@ export const Register = async ( req: Request, res: Response) => {
     // more than 8 chars  
     // at least one number
     // at least one special character
-    // const pass: RegExp =  /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}$/;
-    // if(pass.test(body.password)=== false){
-    //     return res.status(400).send({
-    //         message: "password's must have at least 8 chars and one number and one special caracter"
-    //     })
-    // }
+    const pass: RegExp =  /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}$/;
+    if(pass.test(body.password)=== false){
+        return res.status(400).send({
+            message: "password's must have at least 8 chars and one number and one special caracter"
+        })
+    }
     if(body.password !== body.password_confirm){
         return res.status(400).send({
             message: "password's do not match"
